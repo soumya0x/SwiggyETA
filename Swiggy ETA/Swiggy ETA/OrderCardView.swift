@@ -1,0 +1,90 @@
+import SwiftUI
+
+/// The orders section of the popover: header + stacked order rows with
+/// dividers between them.
+///
+/// This intentionally does NOT provide its own background/shadow/corner-radius
+/// — those live on the shared orders-container in `ContentView` so the same
+/// card wraps every orders state (loading / empty / loaded / error) plus the
+/// footer as one cohesive surface.
+///
+/// Matches the Figma "multiple orders" case (node 70:430):
+///   • Header: solid divider (`border/subtle`) below
+///   • Between rows: dashed divider (`border/default`)
+struct OrderCardView: View {
+    let orders: [Order]
+
+    var body: some View {
+        VStack(spacing: 0) {
+            header
+            solidDivider
+            content
+        }
+    }
+
+    private var header: some View {
+        HStack {
+            Text("Your Orders")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundStyle(Color.textSecondary)
+                .frame(height: 20) // match Figma lineHeightPx
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+    }
+
+    private var content: some View {
+        VStack(spacing: 20) {
+            ForEach(Array(orders.enumerated()), id: \.element.id) { index, order in
+                OrderRowView(order: order)
+                if index < orders.count - 1 {
+                    DashedDivider()
+                }
+            }
+        }
+        .padding(16)
+    }
+
+    // Solid header/content divider — thin, subtle
+    private var solidDivider: some View {
+        Rectangle()
+            .fill(Color.borderSubtle)
+            .frame(height: 0.5)
+    }
+}
+
+// MARK: - Dashed divider between rows
+
+/// Thin dashed horizontal line used between order rows.
+/// Matches Figma's LINE element with `border/default` stroke.
+private struct DashedDivider: View {
+    var body: some View {
+        GeometryReader { geo in
+            Path { path in
+                path.move(to: .zero)
+                path.addLine(to: CGPoint(x: geo.size.width, y: 0))
+            }
+            .stroke(
+                Color.borderStrong,
+                style: StrokeStyle(lineWidth: 0.5, dash: [4, 4])
+            )
+        }
+        .frame(height: 0.5)
+    }
+}
+
+// MARK: - Preview
+//
+// Two Instamart rows either side of dispatch: the first before a partner is
+// assigned (small line shows what was ordered), the second en route (small
+// line has swapped to the partner detail). Both use strings taken verbatim
+// from the 2026-07-27 live capture.
+
+#Preview("Instamart · before + after dispatch") {
+    OrderCardView(orders: Fixtures.instamartStages)
+        .background(Color.surfaceBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .frame(width: 350)
+        .padding(20)
+}
