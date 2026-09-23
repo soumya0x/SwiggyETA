@@ -1,6 +1,6 @@
-# Myles
+# Swiggy ETA
 
-Myles is a menubar app that helps you track your food and instamart orders. You don't have to open your phone each time to check the status of your order. Log in once with your mobile number and it's there in the menu bar.
+Swiggy ETA is a menubar app that helps you track your food and instamart orders. You don't have to open your phone each time to check the status of your order. Log in once with your mobile number and it's there in the menu bar.
 
 <img width="1840" height="590" alt="image" src="https://github.com/user-attachments/assets/a696314d-63f4-4415-8d64-12b0bed2b327" />
 
